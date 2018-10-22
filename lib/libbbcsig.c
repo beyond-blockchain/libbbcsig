@@ -163,8 +163,6 @@ bool VS_STDCALL sign(const int curvetype, int privkey_len, uint8_t *privkey, int
     if (! flag) goto FIN;
 
     ECDSA_SIG *signature = ECDSA_do_sign_ex(hash, hash_len, kinv, rp, eckey);
-    BN_free(kinv);
-    BN_free(rp);
     BN_bn2bin(signature->r, sig_r);
     BN_bn2bin(signature->s, sig_t);
 
@@ -173,6 +171,8 @@ bool VS_STDCALL sign(const int curvetype, int privkey_len, uint8_t *privkey, int
     ECDSA_SIG_free(signature);
 
   FIN:
+    BN_free(kinv);
+    BN_free(rp);
     macro_free_EC_KEY;
     return flag;
 }
