@@ -1,6 +1,9 @@
 Change log
 ====
 
+## v1.1.2
+* bug fix
+
 ## v1.1.1
 * memory free in sign() to avoid RSS wastage
 
