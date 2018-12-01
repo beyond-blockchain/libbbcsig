@@ -1,6 +1,9 @@
 Change log
 ====
 
+## v1.2.3
+* bug fix
+
 ## v1.2.2
 * bug fix
 
