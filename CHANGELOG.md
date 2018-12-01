@@ -1,6 +1,9 @@
 Change log
 ====
 
+## v1.2
+* add static library
+
 ## v1.1.2
 * bug fix
 
