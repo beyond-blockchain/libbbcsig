@@ -15,7 +15,7 @@ LFLAGS0 = -fPIC
 LFLAGS1 = -Wl,--whole-archive
 LFLAGS2 = -Wl,--no-whole-archive
 TARGET = libbbcsig.so
-LINKER = ar rcs -o libbbcsig.a $(LIBS)
+LINKER = ar rcs libbbcsig.a $(LIBS)
 endif
 
 .c.o:
