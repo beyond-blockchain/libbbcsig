@@ -24,16 +24,18 @@ all:
 
 libbbcsig.so:	libbbcsig.o
 	gcc -shared -o $@ $(LFLAGS1) $(LIBS) $(LFLAGS2) $<
+	make libbbcsig.a
 
 libbbcsig.dylib:	libbbcsig.o
 	gcc -shared -o $@ $(LFLAGS1) $(LIBS) $(LFLAGS2) $<
+	make libbbcsig.a
 
 libbbcsig.a:    libbbcsig.o
-        libtool -o $@ $(LIBS) $<
+	libtool -o $@ $(LIBS) $<
 
 openssl:
 	cd $(OPENSSL_DIR) && ./config && make
 
 clean:
-	rm -f libbbcsig.so libbbcsig.dylib libbbcsig.o
+	rm -f libbbcsig.so libbbcsig.dylib libbbcsig.o libbbcsig.a
 
