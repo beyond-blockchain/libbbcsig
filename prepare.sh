@@ -21,5 +21,7 @@ elif [ $1 = "aws" ]; then
     cp -RP ../lib volume/
     bash ami-docker.sh start
     cp volume/lib/libbbcsig.so .
+    cp volume/lib/libbbcsig.a .
+    cp volume/lib/libbbcsig.h .
     exit
 fi
