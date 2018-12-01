@@ -16,3 +16,9 @@ sh prepare.sh aws
 ```
 After finishing prepare.sh script, you will find libbbcsig.so in the ami-docker/ directory.
 
+If you want to generate static link library, do as follows:
+```
+cd lib
+make libbbcsig.a
+```
+For example in golang, the static link library is useful to create stand alone exec command.
