@@ -9,13 +9,11 @@ LFLAGS0 =
 LFLAGS1 = 
 LFLAGS2 =
 TARGET = libbbcsig.dylib
-LINKER = libtool -o libbbcsig.a $(LIBS)
 else
 LFLAGS0 = -fPIC
 LFLAGS1 = -Wl,--whole-archive
 LFLAGS2 = -Wl,--no-whole-archive
 TARGET = libbbcsig.so
-LINKER = ar rcs libbbcsig.a $(LIBS)
 endif
 
 .c.o:
@@ -33,7 +31,15 @@ libbbcsig.dylib:	libbbcsig.o
 	make libbbcsig.a
 
 libbbcsig.a:    libbbcsig.o
-	$(LINKER) $<
+	@if [ "$(UNAME)" = "Darwin" ]; then \
+	    libtool -o $@ $(LIBS) $<; \
+	else \
+	    rm -f $@ libbbc1.a && \
+	    ar rcs libbbc1.a $< && \
+	    ar cqT $@ $< $(LIBS) && \
+	    bash -c "echo -n -e \"create $@\naddlib libbbc1.a\naddlib $(OPENSSL_DIR)/libssl.a\naddlib $(OPENSSL_DIR)/libcrypto.a\nsave\nend\" | ar -M" && \
+	    rm -f libbbc1.a; \
+	fi
 
 openssl:
 	cd $(OPENSSL_DIR) && ./config && make
