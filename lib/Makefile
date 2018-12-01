@@ -28,6 +28,9 @@ libbbcsig.so:	libbbcsig.o
 libbbcsig.dylib:	libbbcsig.o
 	gcc -shared -o $@ $(LFLAGS1) $(LIBS) $(LFLAGS2) $<
 
+libbbcsig.a:    libbbcsig.o
+        libtool -o $@ $(LIBS) $<
+
 openssl:
 	cd $(OPENSSL_DIR) && ./config && make
 
