@@ -9,11 +9,13 @@ LFLAGS0 =
 LFLAGS1 = 
 LFLAGS2 =
 TARGET = libbbcsig.dylib
+LINKER = libtool -o libbbcsig.a $(LIBS)
 else
 LFLAGS0 = -fPIC
 LFLAGS1 = -Wl,--whole-archive
 LFLAGS2 = -Wl,--no-whole-archive
 TARGET = libbbcsig.so
+LINKER = ar rcs -o libbbcsig.a $(LIBS)
 endif
 
 .c.o:
@@ -31,7 +33,7 @@ libbbcsig.dylib:	libbbcsig.o
 	make libbbcsig.a
 
 libbbcsig.a:    libbbcsig.o
-	libtool -o $@ $(LIBS) $<
+	$(LINKER) $<
 
 openssl:
 	cd $(OPENSSL_DIR) && ./config && make
