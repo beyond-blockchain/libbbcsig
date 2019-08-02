@@ -1,6 +1,6 @@
 CC = gcc
 OPENSSL_DIR=../openssl
-INCS = -I$(OPENSSL_DIR)/include -I$(OPENSSL_DIR)
+INCS = -I$(OPENSSL_DIR)/include -I$(OPENSSL_DIR) -I$(OPENSSL_DIR)/crypto/include
 LIBS = $(OPENSSL_DIR)/libssl.a $(OPENSSL_DIR)/libcrypto.a
 
 UNAME := $(shell uname)

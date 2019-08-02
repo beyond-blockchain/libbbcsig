@@ -72,7 +72,12 @@
     EC_KEY_free(eckey)
 
 
-
+static inline int _get_curvetype(int nid)
+{
+    if (nid == NID_secp256k1) return CURVE_TYPE_SECP256;
+    if (nid == NID_X9_62_prime256v1) return CURVE_TYPE_P256;
+    return 0;
+}
 
 static inline const BIGNUM * _get_naive_privateKey_from_eckey(EC_KEY *eckey, int *privkey_len, uint8_t *privkey)
 {
@@ -260,6 +265,22 @@ bool VS_STDCALL convert_from_der(long der_len, const unsigned char *der, const u
     return true;
 }
 
+VS_DLL_EXPORT
+bool VS_STDCALL convert_from_der_with_curvetype(long der_len, const unsigned char *der, const uint8_t compression, int *curvetype,
+                                                int *pubkey_len, uint8_t *pubkey, int *privkey_len, uint8_t *privkey)
+{
+    EC_KEY *eckey = d2i_ECPrivateKey(NULL, &der, der_len); // bug in memory allocation?
+    if (eckey == NULL) return false;
+    EC_GROUP *ecgroup = eckey->group;
+    *curvetype = _get_curvetype(EC_GROUP_get_curve_name(ecgroup));
+
+    const BIGNUM *private_key = _get_naive_privateKey_from_eckey(eckey, privkey_len, privkey);
+
+    _calculate_publicKey_from_bignum_privateKey(ecgroup, private_key, compression, pubkey_len, pubkey);
+
+    EC_GROUP_free(ecgroup);
+    return true;
+}
 
 VS_DLL_EXPORT
 bool VS_STDCALL convert_from_pem(const char *pem, const uint8_t compression,
@@ -269,7 +290,23 @@ bool VS_STDCALL convert_from_pem(const char *pem, const uint8_t compression,
 
     EC_KEY *eckey = EVP_PKEY_get1_EC_KEY(privateKey);
     EC_GROUP *ecgroup = eckey->group;
-    //macro_init_EC_GROUP(curvetype);
+    const BIGNUM *private_key = _get_naive_privateKey_from_eckey(eckey, privkey_len, privkey);
+
+    _calculate_publicKey_from_bignum_privateKey(ecgroup, private_key, compression, pubkey_len, pubkey);
+
+    macro_free_EC_KEY;
+    return true;
+}
+
+VS_DLL_EXPORT
+bool VS_STDCALL convert_from_pem_with_curvetype(const char *pem, const uint8_t compression, int *curvetype,
+                                                int *pubkey_len, uint8_t *pubkey, int *privkey_len, uint8_t *privkey)
+{
+    EVP_PKEY *privateKey =  _read_privateKey_pem(pem);
+
+    EC_KEY *eckey = EVP_PKEY_get1_EC_KEY(privateKey);
+    EC_GROUP *ecgroup = eckey->group;
+    *curvetype = _get_curvetype(EC_GROUP_get_curve_name(ecgroup));
     const BIGNUM *private_key = _get_naive_privateKey_from_eckey(eckey, privkey_len, privkey);
 
     _calculate_publicKey_from_bignum_privateKey(ecgroup, private_key, compression, pubkey_len, pubkey);
@@ -314,6 +351,29 @@ bool VS_STDCALL read_x509(const char *pubkey_x509, const uint8_t compression,  i
     return true;
 }
 
+VS_DLL_EXPORT
+bool VS_STDCALL read_x509_with_curvetype(const char *pubkey_x509, const uint8_t compression, int *curvetype, int *pubkey_len, uint8_t *pubkey)
+{
+    BIO *bio = BIO_new(BIO_s_mem());
+    BIO_write(bio, pubkey_x509, strlen(pubkey_x509));
+    X509 *x509 = PEM_read_bio_X509(bio, NULL, NULL, NULL);
+    if (x509 == NULL) {
+        BIO_free(bio);
+        return false;
+    }
+    BIO_free(bio);
+
+    EVP_PKEY *public_key = X509_get_pubkey(x509);
+    EC_KEY *eckey = EVP_PKEY_get1_EC_KEY(public_key);
+    EC_GROUP *ecgroup = eckey->group;
+    *curvetype = _get_curvetype(EC_GROUP_get_curve_name(ecgroup));
+
+    _get_naive_pubicKey_from_eckey(eckey, ecgroup, compression, pubkey_len, pubkey);
+
+    EVP_PKEY_free(public_key);
+    macro_free_EC_KEY;
+    return true;
+}
 
 VS_DLL_EXPORT
 int VS_STDCALL verify_x509(const char *pubkey_x509, const char *privkey_pem)
