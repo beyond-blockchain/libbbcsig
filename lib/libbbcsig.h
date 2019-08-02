@@ -104,7 +104,7 @@ VS_DLL_EXPORT
 bool VS_STDCALL get_public_key_compressed(const int curvetype, int privkey_len, uint8_t *privkey, int *pubkey_len, uint8_t *pubkey);
 
 /**
- *
+ * (deprecated)
  * 
  * @param [in] der_len
  * @param [in] der
@@ -120,6 +120,22 @@ bool VS_STDCALL convert_from_der(long der_len, const unsigned char *der, const u
 
 /**
  *
+ * @param der_len
+ * @param der
+ * @param compression
+ * @param curvetype
+ * @param pubkey_len
+ * @param pubkey
+ * @param privkey_len
+ * @param privkey
+ * @return
+ */
+VS_DLL_EXPORT
+bool VS_STDCALL convert_from_der_with_curvetype(long der_len, const unsigned char *der, const uint8_t compression, int *curvetype,
+                                                int *pubkey_len, uint8_t *pubkey, int *privkey_len, uint8_t *privkey);
+
+/**
+ * (deprecated)
  *
  * @param [in] pem
  * @param [in] compression
@@ -134,6 +150,21 @@ bool VS_STDCALL convert_from_pem(const char *pem, const uint8_t compression,
 
 /**
  *
+ * @param pem
+ * @param compression
+ * @param curvetype
+ * @param pubkey_len
+ * @param pubkey
+ * @param privkey_len
+ * @param privkey
+ * @return
+ */
+VS_DLL_EXPORT
+bool VS_STDCALL convert_from_pem_with_curvetype(const char *pem, const uint8_t compression, int *curvetype,
+                                                int *pubkey_len, uint8_t *pubkey, int *privkey_len, uint8_t *privkey);
+
+/**
+ *
  * @param pubkey_x509
  * @param compression
  * @param pubkey_len
@@ -142,6 +173,18 @@ bool VS_STDCALL convert_from_pem(const char *pem, const uint8_t compression,
  */
 VS_DLL_EXPORT
 bool VS_STDCALL read_x509(const char *pubkey_x509, const uint8_t compression, int *pubkey_len, uint8_t *pubkey);
+
+/**
+ *
+ * @param pubkey_x509
+ * @param compression
+ * @param curvetype
+ * @param pubkey_len
+ * @param pubkey
+ * @return
+ */
+VS_DLL_EXPORT
+bool VS_STDCALL read_x509_with_curvetype(const char *pubkey_x509, const uint8_t compression, int *curvetype, int *pubkey_len, uint8_t *pubkey);
 
 /**
  *

@@ -3,7 +3,8 @@
 if [ -z $1 ]; then
     git clone https://github.com/openssl/openssl.git ./openssl
     pushd ./openssl
-    git checkout f70425d3ac5e4ef17cfa116d99f8f03bbac1c7f2
+    #git checkout f70425d3ac5e4ef17cfa116d99f8f03bbac1c7f2
+    git checkout OpenSSL_1_1_1c
     ./config && make
     popd
 
